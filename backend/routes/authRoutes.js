@@ -1,0 +1,48 @@
+import express from 'express';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import User from '../models/User';
+
+const router = express.Router();
+
+
+router.post('/signup', async (req, res) => {
+    try {
+        const { name, email, passowrd } = req.body;
+        const user = await User.findOne({ email });
+        if (user) {
+            return res.status(400).json({ message: "user alraedy exist" });
+        }
+
+        const hashedPassword = await bcrypt.hash(passowrd, 10);
+
+        user = new User({ name, email, passowrd: hashedPassword });
+        user.save();
+        res.status(201).json({ message: "user resgistered successfully" })
+
+    } catch (error) {
+        console.error("error", error.message);
+        res.status(500).json({ meessage: "Error" });
+    }
+})
+
+router.post('/signin', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        console.log(email, password)
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: "User does not exist.Please signin" })
+        }
+        console.log(user)
+        const isPasswordSame = await bcrypt.compare(password, user.password);
+        if (!isPasswordSame) {
+            return res.status(403).json({ message: 'Invalid Password' })
+        }
+        const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        return res.status(200).json({ message: "Signed in successfully", token })
+    } catch (error) {
+        console.error('Error', error.message);
+        res.status(500).json({ message: "Error" })
+    }
+})
