@@ -2,6 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
+import authMiddleware from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -42,6 +43,21 @@ router.post('/signin', async (req, res) => {
     } catch (error) {
         console.error('Error', error.message);
         res.status(500).json({ message: "Error" })
+    }
+});
+
+router.get('/', authMiddleware, async (req, res) => {
+    try {
+        const email = req.email;
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: "User not found! Please signin!" })
+        }
+        res.status(200).json({ message: "User Found Successfully!", user });
+
+    } catch (error) {
+        console.error("Error", error.message);
+        res.status(500).json({ message: "Internal Server Error in signing in user!" })
     }
 });
 
