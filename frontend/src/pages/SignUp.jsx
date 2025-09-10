@@ -1,11 +1,40 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
+import {useState, useEffect} from 'react';
+
 function SignUp() {
+    const [name,setName] =useState("");
+    const [email, setEmail] =useState("");
+    const [password, setPassword] = useState("");
+    const navigate = useNavigate();
+
+    useEffect(()=>{
+        const token= localStorage.getItem('token');
+        if(token){
+            navigate("/");
+        }
+    },[])
+
+    const handleSignup= async (e) =>{
+        e.preventDefault();
+        try {
+            const data= {name, email, password};
+            const response = await axios.post('https://localhost:5000/api/auth/signup' , data);
+            if(response.status==201){
+                navigate('/login');
+            }
+        } catch (error) {
+            console.error("Error during signup: ", error.message);
+            alert("An error occurred during signup. Please try again.");  
+        }
+    };
+
     return (
         <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-green-50'>
             <div className='bg-white p-8 rounded-2xl shadow-lg w-96'>
                 <h2 className='text-2xl font-bold text-center text-teal-600 mb-6'>Sign up</h2>
-                <form className='flex flex-col space-y-4'>
+                <form onSubmit={handleSignup} className='flex flex-col space-y-4'>
                     <input type="text" placeholder='Full Name' className='border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2  focus:ring-teal-500'></input>
                     <input type="email" placeholder='Email' className='border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2  focus:ring-teal-500'></input>
                     <input type="password" placeholder='Password' className='border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2  focus:ring-teal-500'></input>
