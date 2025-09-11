@@ -28,7 +28,6 @@ function Navbar() {
         {!auth && <Link to="/login" className='bg-teal-600 text-white px-4 py-2 rounded-lg shadow hover:bg-tea'>Login</Link>}
         {auth && <button onClick={()=>{
           localStorage.removeItem('token');
-          setAuth(false);
           navigate('/login');
         }} className='bg-teal-600 text-white px-4 py-2 rounded-lg shadow hover:bg-teal-700'>Logout</button>}
       </nav>

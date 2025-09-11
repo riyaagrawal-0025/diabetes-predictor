@@ -13,15 +13,14 @@ router.post('/signup', async (req, res) => {
         if (user) {
             return res.status(400).json({ message: "user alraedy exist" });
         }
-
         const hashedPassword = await bcrypt.hash(password, 10);
 
         user = new User({ name, email, password: hashedPassword });
-        user.save();
+        await user.save();
         res.status(201).json({ message: "user resgistered successfully" })
     } catch (error) {
         console.error("error", error.message);
-        res.status(500).json({ meessage: "Error" });
+        res.status(500).json({ message: "Error" });
     }
 });
 
@@ -31,7 +30,7 @@ router.post('/signin', async (req, res) => {
         console.log(email, password)
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ message: "User does not exist.Please signin" })
+            return res.status(404).json({ message: "User does not exist.Please signup" })
         }
         console.log(user)
         const isPasswordSame = await bcrypt.compare(password, user.password);
