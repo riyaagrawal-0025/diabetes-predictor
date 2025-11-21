@@ -45,8 +45,6 @@ function Predictpage() {
         alert("Something went wrong!");
         return;
       }
-
-      // Save result to navigate with state
       navigate("/result", { state: data });
 
     } catch (error) {
@@ -60,8 +58,6 @@ function Predictpage() {
   return (
     <div className="flex flex-col items-center py-12 mx-8">
       <h2 className="text-3xl font-bold mb-6">Predict Diabetes Risk</h2>
-
-      {/* FORM START */}
       <form
         onSubmit={handleSubmit}
         className="bg-white p-6 rounded-lg shadow-lg grid grid-cols-3 gap-4 w-full max-w-5xl"
@@ -89,7 +85,6 @@ function Predictpage() {
           </button>
         </div>
       </form>
-      {/* FORM END */}
     </div>
   );
 }
