@@ -1,54 +1,106 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 function Result() {
   const navigate = useNavigate();
-  const location = useLocation();
+  const { state } = useLocation();
 
-  const data = location.state;
-
-  // If user opens /result manually => redirect back
-  if (!data) {
+  if (!state) {
     return (
-      <div className="text-center p-10">
-        <h2>No Result Found</h2>
-        <button
-          onClick={() => navigate("/predict")}
-          className="bg-teal-600 text-white px-6 py-3 mt-4 rounded-lg hover:bg-teal-700"
-        >
-          Go Back
-        </button>
+      <div className="min-h-screen flex items-center justify-center">
+        <p>No result found. Please try again.</p>
       </div>
     );
   }
 
-  const { prediction, probability } = data;
+  const { prediction, probability } = state;
+
+  
+  const percentage = Math.round(probability * 100);
+
+  
+  let riskLabel = "";
+  let riskColor = "";
+
+  if (percentage < 40) {
+    riskLabel = "Low Risk";
+    riskColor = "text-green-600";
+  } else if (percentage < 70) {
+    riskLabel = "Moderate Risk";
+    riskColor = "text-yellow-600";
+  } else {
+    riskLabel = "High Risk";
+    riskColor = "text-red-600";
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-green-50">
-      <div className="bg-white p-10 rounded-2xl shadow-xl text-center w-[400px]">
-        <h2 className="text-3xl font-bold text-gray-800 mb-4">
-          Prediction Result
-        </h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 via-white to-emerald-50 px-4 py-10">
+      <div className="bg-white w-full max-w-xl p-10 rounded-3xl shadow-xl border border-gray-100 animate-fadeIn">
 
-        <p className="text-lg text-gray-700 mb-6">
-          {prediction === 1
-            ? "⚠️ High Risk of Diabetes"
-            : "✅ Low Risk of Diabetes"}
-        </p>
+        
+        <h1 className="text-3xl font-bold text-gray-800 text-center mb-8">
+          Diabetes Risk Analysis
+        </h1>
 
-        {probability !== undefined && (
-          <p className="text-md text-gray-500 mb-6">
-            Probability: {(probability * 100).toFixed(2)}%
+       
+        <div className="flex justify-center mb-10">
+          <div className="relative w-48 h-48">
+          
+            <div className="absolute inset-0 rounded-full border-8 border-gray-200"></div>
+
+            
+            <div
+              className="absolute inset-0 rounded-full border-8 border-teal-500 border-t-transparent border-l-transparent"
+              style={{
+                transform: `rotate(${percentage * 1.8}deg)`,
+                transition: "1.2s ease",
+              }}
+            ></div>
+
+            
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <p className={`text-3xl font-bold ${riskColor}`}>{percentage}%</p>
+              <p className="text-gray-500 text-sm tracking-wide">{riskLabel}</p>
+            </div>
+          </div>
+        </div>
+
+   
+        <div className="bg-gray-50 border border-gray-200 p-6 rounded-2xl shadow-inner mb-8">
+          <h2 className="text-xl font-semibold text-gray-700 text-center mb-3">
+            Prediction Summary
+          </h2>
+
+          <p className="text-gray-600 text-center leading-relaxed">
+            According to the AI model, your estimated risk of diabetes is{" "}
+            <span className={`font-semibold ${riskColor}`}>
+              {riskLabel.toUpperCase()}
+            </span>
+            , with a prediction confidence of{" "}
+            <span className="font-semibold text-teal-600">
+              {percentage}%
+            </span>.
           </p>
-        )}
+        </div>
 
-        <button
-          onClick={() => navigate("/predict")}
-          className="bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-700"
-        >
-          Try Again
-        </button>
+        
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700 mb-6">
+          ⚠️ <span className="font-semibold">Note:</span> This prediction is
+          based on machine learning and standardized medical indicators. It is
+          not a medical diagnosis. Consult a healthcare professional for
+          accurate health assessment.
+        </div>
+
+        
+        <div className="flex justify-center">
+          <button
+            onClick={() => navigate("/predict")}
+            className="px-8 py-3 bg-emerald-600 text-white text-lg font-semibold rounded-full shadow-lg hover:bg-emerald-700 hover:scale-105 active:scale-95 transition-all"
+          >
+            Try Again
+          </button>
+        </div>
+
       </div>
     </div>
   );
