@@ -16,12 +16,17 @@ function Navbar() {
 
   return (
     <nav className="flex justify-between items-center px-8 py-4 bg-white/90 backdrop-blur shadow-md fixed w-full top-0 z-50">
-      {/* Logo */}
-      <Link to="/" className="text-2xl font-extrabold text-teal-600 tracking-tight">
-        Diabetes Predict
+       <Link to="/" className="flex items-center space-x-3">
+        <img
+          src="/logo.png"
+          alt="App Logo"
+          className="w-10 h-10 object-contain drop-shadow-sm"
+        />
+        <span className="text-xl font-extrabold text-teal-600 tracking-tight">
+          Diabetes Predictor
+        </span>
       </Link>
 
-      {/* Navigation Links */}
       <ul className="flex space-x-6 text-gray-700 font-medium">
         <li>
           <Link to="/" className={`hover:text-teal-600 transition ${isActive("/")}`}>
@@ -43,7 +48,6 @@ function Navbar() {
         </li>
       </ul>
 
-      {/* Auth Buttons */}
       {!auth ? (
         <Link
           to="/login"
